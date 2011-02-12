@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# gitsync /folder/to/watch <seconds> &
+# gitsync /home/nic/sync 10 &
+#
+
+function gitsync() {
+  dir="$1"
+  for="$2"
+  
+  echo "Started..."
+  while [[ true ]]; do
+    # get current bytes
+    curr=`du -s $dir --exclude=.gitsync | awk '{print $1}'`
+    prev=$curr
+    
+    while [[ $curr -eq $prev ]]; do
+        echo "No changes, sleeping..."
+        sleep $for
+        curr=`du -s $dir --exclude=.gitsync | awk '{print $1}'`
+    done
+    
+    # make sure we aren't writing :/
+    sleep 1
+    orig=`du -s $dir --exclude=.gitsync | awk '{print $1}'`
+    echo "orig: $orig, curr: $curr"
+    while [[ $curr -ne $orig ]]; do
+      orig=`du -s $dir --exclude=.gitsync | awk '{print $1}'`
+      echo "Might be writing. | orig: $orig, curr: $curr"
+      sleep 3
+      curr=`du -s $dir --exclude=.gitsync | awk '{print $1}'`
+    done
+        
+    #msg=`cd $dir && git status --porcelain`
+    `cd $dir && git add -A`
+    `cd $dir && git commit -qm "Auto Commit"`
+    echo `date +%r`" Committed"
+  done
+}
+
+gitsync $*

@@ -1,6 +1,4 @@
 #!/usr/bin/ruby
-require "rubygems"
-require 'trollop'
 
 def sync
   # Setup options

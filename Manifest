@@ -1,8 +1,6 @@
 Gemfile
+Manifest
 README
 Rakefile
 bin/autosync
 bin/gitsync
-gitsync.gemspec
-lib/gitsync.rb
-Manifest

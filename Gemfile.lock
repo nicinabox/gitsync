@@ -9,7 +9,6 @@ GEM
     rake (0.8.7)
     rcov (0.9.9)
     shoulda (2.11.3)
-    trollop (1.16.2)
 
 PLATFORMS
   ruby
@@ -19,4 +18,3 @@ DEPENDENCIES
   jeweler (~> 1.5.2)
   rcov
   shoulda
-  trollop

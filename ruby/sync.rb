@@ -3,21 +3,18 @@ require "rubygems"
 require 'trollop'
 
 def sync
-  dir = ARGV[0] || abort("No path specified!")
+  #dir = ARGV[0] || abort("No path specified!")
   
   # Setup options
   opts = Trollop::options do
     opt :debug, "Show debug output", :default => false
     opt :interactive, "Interactive", :default => false
-    opt :exclude, "Exclude files from size check", :default => "synclog"
   end
   
   puts "Git sync started..." if opts[:debug]
   
-  x = "--exclude=#{opts[:exclude]}"
-  
   # Current working size
-  orig_size = `du -s #{dir} #{x} | awk '{print $1}'`
+  orig_size = `du -s #{dir} | awk '{print $1}'`
   
   # Current status
   go = "cd #{dir} &&"
@@ -26,12 +23,12 @@ def sync
   
   # Write protection
   sleep 1
-  curr_size = `du -s #{dir} #{x} | awk '{print $1}'`
+  curr_size = `du -s #{dir} | awk '{print $1}'`
   while curr_size != orig_size
     orig = `du -s #{dir} | awk '{print $1}'`
     puts "Might be writing: orig: #{orig_size}, curr: #{curr_size}" if opts[:debug]
     sleep 3
-    curr_size = `du -s #{dir} #{x} | awk '{print $1}'`
+    curr_size = `du -s #{dir} | awk '{print $1}'`
   end
   
   # Git

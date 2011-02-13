@@ -1,6 +1,19 @@
 = gitsync
 
-Gitsync will watch a directory for changes then automatically commit any changed files.
+Gitsync is a command line tool that watchess a directory for changes then automatically commits any changed files.
+
+== Using
+
+Gitsync consists of 2 tools: one runs on a server, and one runs on the client. They're basic syntaxes are the same.
+
+Server:
+autosync -d /path/to/folder/
+
+Client:
+gitsync -d /path/to/folder/
+
+The autosync command, as it's name implies, commits files automatically on change. The service only needs to be running in the background:
+autosync -d /path/to/folder/ &
 
 == Contributing to gitsync
  

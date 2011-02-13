@@ -1,19 +1,18 @@
 #!/usr/bin/ruby
-require 'optparse'
+require "rubygems"
+require 'trollop'
 
 def sync
   dir = ARGV[0] || abort("No path specified!")
-  options = {}
-  OptionParser.new do |o|
-    o.banner = "Usage: gitsync.rb [-di] /path/to/repo/"
-    o.on('-d', 'Show debugging output') { |b| options[:debug] = b }
-    o.on('-i', 'Interactive') { |b| options[:interactive] = b }
-    o.on('-h', 'Halps!') { puts o; exit }
-    o.parse!
+  
+  # Setup options
+  opts = Trollop::options do
+    opt :debug, "Show debug output", :default => false
+    opt :interactive, "Interactive", :default => false
   end
   
   #p :debug => $debug, :interactive => $interactive
-  puts "Git sync started..." if options[:debug]
+  puts "Git sync started..." if opts[:debug]
   
   
   # Current working size
@@ -29,7 +28,7 @@ def sync
   curr_size = `du -s #{dir} | awk '{print $1}'`
   while curr_size != orig_size
     orig = `du -s $dir | awk '{print $1}'`
-    puts "Might be writing: orig: #{orig_size}, curr: #{curr_size}" if options[:debug]
+    puts "Might be writing: orig: #{orig_size}, curr: #{curr_size}" if opts[:debug]
     sleep 3
     curr_size = `du -s #{dir} | awk '{print $1}'`
   end
@@ -38,7 +37,7 @@ def sync
   unless status.empty?
     # Add all files
     puts %x(#{go} pwd)
-    if options[:interactive]
+    if opts[:interactive]
       print "\nAdd these files to staging?\n#{status.join("\n")}?\n[yn] "
       response = $stdin.gets.chomp
       exit if response == "n"
@@ -50,15 +49,15 @@ def sync
     porcelain = %x(#{go} git status --porcelain).split("\n")
     
     # Commit!
-    if options[:interactive]
+    if opts[:interactive]
       print "\nCommit #{s = staged.join(", ")}? [yn] "
       response == $stdin.gets.chomp
       exit if response == "n"
     end
     %x(cd #{dir} && git commit -qm "#{porcelain.join("\n")}")
-    puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} #{staged.join(", ")}" if options[:debug]
+    puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} #{staged.join(", ")}" if opts[:debug]
   else
-    puts "Nothing to commit." if options[:debug]
+    puts "Nothing to commit." if opts[:debug]
   end
   
 end

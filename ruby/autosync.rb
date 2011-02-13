@@ -1,19 +1,25 @@
 #!/usr/bin/ruby
+require "rubygems"
+require 'trollop'
+
 def sync
-  dir = ARGV[0]
-  time = ARGV[1]
-  debug = ARGV[2] || false
+  dir = ARGV[0] || abort("No path specified!")
   
-  puts "Git sync started..." if debug
+  opts = Trollop::options do
+    opt :debug, "Show debug output", :default => false
+    opt :frequency, "Frequency to run", :default => 10
+  end
+  
+  puts "Git sync started..." if opts[:debug]
   
   while true
     curr = `du -s #{dir} | awk '{print $1}'`
     prev = curr
   
     while curr == prev
-      puts "No change, waiting #{time} seconds" if debug
+      puts "No change, waiting #{opts[:frequency]} seconds" if opts[:debug]
     
-      sleep time.to_i
+      sleep opts[:frequency].to_i
       curr = `du -s #{dir} | awk '{print $1}'`
     end
   
@@ -21,7 +27,7 @@ def sync
     orig = `du -s #{dir} | awk '{print $1}'`
     while curr != orig
       orig = `du -s $dir | awk '{print $1}'`
-      puts "Might be writing: orig: #{orig}, curr: #{curr}" if debug
+      puts "Might be writing: orig: #{orig}, curr: #{curr}" if opts[:debug]
       sleep 3
       curr = `du -s #{dir} | awk '{print $1}'`
     end
@@ -30,7 +36,7 @@ def sync
     `cd #{dir} && git add -A` 
     `cd #{dir} && git commit -qam "#{msg}"`
   
-    puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} Committed" if debug
+    puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} Committed" if opts[:debug]
   end
   
 end

@@ -5,7 +5,7 @@ require 'trollop'
 def sync
   # Setup options
   opts = Trollop::options do
-    opt :dir, "Directory to watch", :type => String
+    opt :dir, "Directory to watch", :type => String, :required => true 
     opt :debug, "Show debug output", :default => false
     opt :interactive, "Interactive", :default => false
     opt :pull, "git pull", :default => false
@@ -28,16 +28,16 @@ def sync
   
   
   # Current working size
-  orig_size = `du -s #{dir} | awk '{print $1}'`
+  orig_size = %x(du -s #{dir} | awk '{print $1}').chomp
   
   # Write protection
   sleep 1
-  curr_size = `du -s #{dir} | awk '{print $1}'`
+  curr_size = %x(du -s #{dir} | awk '{print $1}').chomp
   while curr_size != orig_size
-    orig = `du -s #{dir} | awk '{print $1}'`
+    orig = %x(du -s #{dir} | awk '{print $1}').chomp
     puts "Might be writing: orig: #{orig_size}, curr: #{curr_size}" if opts[:debug]
     sleep 3
-    curr_size = `du -s #{dir} | awk '{print $1}'`
+    curr_size = %x(du -s #{dir} | awk '{print $1}').chomp
   end
   
   # Git

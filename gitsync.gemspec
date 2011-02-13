@@ -13,16 +13,36 @@ Gem::Specification.new do |s|
   s.description = %q{Autosync watched directories in git}
   s.email = %q{nic@nicinabox.com}
   s.executables = ["autosync", "gitsync"]
+  s.extra_rdoc_files = [
+    "LICENSE.txt",
+    "README.rdoc"
+  ]
   s.files = [
     ".rvmrc",
     "Gemfile",
-    "Gemfile.lock"
+    "Gemfile.lock",
+    "LICENSE.txt",
+    "Manifest",
+    "README.rdoc",
+    "Rakefile",
+    "VERSION",
+    "bin/autosync",
+    "bin/gitsync",
+    "gitsync.gemspec",
+    "lib/gitsync.rb",
+    "lib/trollop.rb",
+    "test/helper.rb",
+    "test/test_gitsync.rb"
   ]
   s.homepage = %q{http://github.com/nicinabox/gitsync}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.0}
   s.summary = %q{Autosync watched directories in git}
+  s.test_files = [
+    "test/helper.rb",
+    "test/test_gitsync.rb"
+  ]
 
   if s.respond_to? :specification_version then
     s.specification_version = 3

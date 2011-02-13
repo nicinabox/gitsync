@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'rake'
+require 'bundler'
 require 'echoe'
 
 Echoe.new('gitsync', '0.0.1') do |p|

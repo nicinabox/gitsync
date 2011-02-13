@@ -3,23 +3,32 @@ require "rubygems"
 require 'trollop'
 
 def sync
-  #dir = ARGV[0] || abort("No path specified!")
-  
   # Setup options
   opts = Trollop::options do
+    opt :dir, "Directory to watch", :type => String
     opt :debug, "Show debug output", :default => false
     opt :interactive, "Interactive", :default => false
+    opt :pull, "git pull", :default => false
   end
   
   puts "Git sync started..." if opts[:debug]
-  
-  # Current working size
-  orig_size = `du -s #{dir} | awk '{print $1}'`
-  
+
+  dir = opts[:dir]
+
   # Current status
   go = "cd #{dir} &&"
   status = %x(#{go} git status --porcelain).split("\n")
   untracked = %x(#{go} git ls-files -o -X .gitignore).split("\n")
+   
+  if opts[:pull] 
+    output = %x(#{go} git pull)
+    puts output
+    exit
+  end
+  
+  
+  # Current working size
+  orig_size = `du -s #{dir} | awk '{print $1}'`
   
   # Write protection
   sleep 1
@@ -34,7 +43,6 @@ def sync
   # Git
   unless status.empty?
     # Add all files
-    puts %x(#{go} pwd)
     if opts[:interactive]
       print "\nAdd these files to staging?\n#{status.join("\n")}?\n[yn] "
       response = $stdin.gets.chomp

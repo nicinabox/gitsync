@@ -27,9 +27,14 @@ while true
 
   sleep 1
   orig = %x(du -s #{dir} | awk '{print $1}').chomp
+  showmsg = true
   while curr != orig
+    verbose = "Waiting for transfer to finsih..."
+    puts verbose if opts[:verbose] && showmsg
+    %x(ssh #{opts[:growl]} 'growl -m "#{verbose}" -t "Gitsync"') if opts[:growl] && showmsg
+    showmsg = false
+    
     orig = %x(du -s #{dir} | awk '{print $1}').chomp
-    puts "File being written. Waiting..." if opts[:verbose]
     sleep 4
     curr = %x(du -s #{dir} | awk '{print $1}').chomp
   end

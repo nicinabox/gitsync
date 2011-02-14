@@ -6,9 +6,12 @@ opts = Trollop::options do
   opt :dir, "Directory to watch", :type => String, :required => true 
   opt :verbose, "Show verbose output", :default => false
   opt :frequency, "Frequency to run", :default => 10
+  opt :growl, "Remote growl notifications [alpha]", :type => String 
 end
-  
-puts "Git sync started..." if opts[:verbose]
+
+verbose = "Git sync started..."
+puts verbose if opts[:verbose]
+%x(ssh #{opts[:growl]} 'growl -m "#{verbose}" -t "Gitsync"') if opts[:growl]
 
 dir = opts[:dir]
 
@@ -30,12 +33,18 @@ while true
     sleep 4
     curr = %x(du -s #{dir} | awk '{print $1}').chomp
   end
-
-  puts "Adding files..." if opts[:verbose]
+  
+  verbose = "Adding files..."
+  puts verbose if opts[:verbose]
+  %x(ssh #{opts[:growl]} 'growl -m "#{verbose}" -t "Gitsync"') if opts[:growl]
+  
   msg = `cd #{dir} && git status --porcelain`
   %x(cd #{dir} && git add -A)
   %x(cd #{dir} && git commit -qm "#{msg}")
 
-  puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} Committed" if opts[:verbose]
+  verbose = "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} Committed"
+  puts verbose if opts[:verbose]
+  %x(ssh #{opts[:growl]} 'growl -m "#{verbose}" -t "Gitsync"') if opts[:growl]
+  
   puts "Watching for change..." if opts[:verbose]
 end

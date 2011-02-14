@@ -34,17 +34,18 @@ while true
     curr = %x(du -s #{dir} | awk '{print $1}').chomp
   end
   
-  verbose = "Adding files..."
-  puts verbose if opts[:verbose]
-  %x(ssh #{opts[:growl]} 'growl -m "#{verbose}" -t "Gitsync"') if opts[:growl]
-  
   msg = `cd #{dir} && git status --porcelain`
+  
+  verbose = msg
+  puts verbose if opts[:verbose]
+  %x(ssh #{opts[:growl]} 'growl -m "#{verbose}" -t "Adding Files"') if opts[:growl]
+  
   %x(cd #{dir} && git add -A)
   %x(cd #{dir} && git commit -qm "#{msg}")
 
-  verbose = "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} Committed"
+  verbose = "#{msg} commited."
   puts verbose if opts[:verbose]
-  %x(ssh #{opts[:growl]} 'growl -m "#{verbose}" -t "Gitsync"') if opts[:growl]
+  %x(ssh #{opts[:growl]} 'growl -m "#{verbose}" -t "Files Commited"') if opts[:growl]
   
   puts "Watching for change..." if opts[:verbose]
 end

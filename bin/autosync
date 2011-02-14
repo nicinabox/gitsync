@@ -52,5 +52,6 @@ while true
   puts verbose if opts[:verbose]
   %x(ssh #{opts[:growl]} 'growl -m "#{verbose}" -t "Files Commited"') if opts[:growl]
   
+  sleep 1
   puts "Watching for change..." if opts[:verbose]
 end
